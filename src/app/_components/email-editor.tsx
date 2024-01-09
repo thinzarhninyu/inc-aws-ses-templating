@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { modules, formats } from "@/data/react-quill";
+import { api } from "@/trpc/server";
 
-import type { RouterOutputs } from "@/trpc/shared";
+import { modules, formats } from "@/data/react-quill";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -11,7 +11,7 @@ import "react-quill/dist/quill.snow.css";
 import { Checkbox } from "@/app/_components/ui/checkbox"
 import { Label } from "@/app/_components/ui/label"
 import { Input } from "@/app/_components/ui/input"
-
+import SendEmailButton from "@/app/_components/send-email-button";
 
 const EmailEditor = () => {
 
@@ -19,6 +19,9 @@ const EmailEditor = () => {
     const [rawText, setRawText] = useState("");
     const [subject, setSubject] = useState("");
     const [quickResponseSettings, setQuickResponseSettings] = useState(false);
+
+    const senderId = "clr5u3jt5000013gqb09tipy8";
+    const recipientsId = ["clr5u7e9x000113gqs5819787", "clr5uabbu000313gquiod17xd"];
 
     const handleContentChange = (content: string) => {
         setContent(content);
@@ -33,10 +36,6 @@ const EmailEditor = () => {
     const handleQuickResponseSettingsChange = (checked: boolean) => {
         setQuickResponseSettings(checked);
         console.log(checked);
-    }
-
-    const handleSendEmail = () => {
-        console.log("Sending email...");
     }
 
     return (
@@ -77,12 +76,7 @@ const EmailEditor = () => {
                 </Label>
             </div>
             <div>
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
-                    onClick={handleSendEmail}
-                >
-                    Send
-                </button>
+                <SendEmailButton senderId={senderId} subject={subject} content={content} recipientsId={recipientsId} quickResponseSettings={quickResponseSettings} />
             </div>
         </div >
     )
