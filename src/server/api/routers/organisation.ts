@@ -4,8 +4,10 @@ import { z } from "zod";
 export const organizationRouter = createTRPCRouter({
 
   getAllOrganisations: protectedProcedure.query(async ({ ctx }) => {
+    console.log("hi");
     try {
       const allOrganisation = await ctx.db.organization.findMany();
+      console.log(allOrganisation);
       return allOrganisation;
     } catch (error) {
       console.error(error);
