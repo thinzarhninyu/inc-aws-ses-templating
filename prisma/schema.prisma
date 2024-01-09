@@ -54,14 +54,89 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
+    id                 String             @id @default(cuid())
+    name               String?
+    email              String?            @unique
+    emailVerified      DateTime?
+    image              String?
+    systemRole         SystemRole         @default(user)
+    accounts           Account[]
+    sessions           Session[]
+    userOrganizations  UserOrganization[]
+    userProjects       UserProject[]
+    Post               Post[]
+    emailId            String?
+    sentEmails         Email[]            @relation("EmailSender")
+    receivedEmails     Email[]            @relation("EmailRecipients")
+    sentEmailResponses EmailResponse[]    @relation("ResponseSender")
+    emailResponseId    String?
+    bouncedEmails      Email[]            @relation("BouncedEmailRecipients")
+}
+
+model UserOrganization {
+    id             String       @id @default(cuid())
+    userId         String
+    organizationId String
+    role           OrgRole
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model UserProject {
+    id        String  @id @default(cuid())
+    userId    String
+    projectId String
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Organization {
+    id                String             @id @default(cuid())
+    name              String
+    projects          Project[]
+    userOrganizations UserOrganization[]
+    createdAt         DateTime           @default(now())
+}
+
+model Project {
+    id             String        @id @default(cuid())
+    name           String
+    organizationId String
+    organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    forms          Form[]
+    createdAt      DateTime      @default(now())
+    userProjects   UserProject[]
+}
+
+model Form {
+    id        String   @id @default(cuid())
+    name      String
+    projectId String
+    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+}
+
+model Email {
+    id                    String          @id @default(cuid())
+    senderId              String
+    sender                User            @relation("EmailSender", fields: [senderId], references: [id], onDelete: Cascade)
+    recipients            User[]          @relation("EmailRecipients")
+    subject               String
+    content               String
+    createdAt             DateTime        @default(now())
+    quickResponseSettings Boolean         @default(false)
+    EmailResponse         EmailResponse[]
+    bouncedEmails         User[]          @relation("BouncedEmailRecipients")
+}
+
+model EmailResponse {
+    id            String              @id @default(cuid())
+    emailId       String
+    quickResponse EmailQuickResponse?
+    senderId      String
+    sender        User                @relation("ResponseSender", fields: [senderId], references: [id], onDelete: Cascade)
+    email         Email               @relation(fields: [emailId], references: [id], onDelete: Cascade)
+    createdAt     DateTime            @default(now())
 }
 
 model VerificationToken {
@@ -70,4 +145,20 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum EmailQuickResponse {
+    yes
+    no
+}
+
+enum SystemRole {
+    superadmin
+    admin
+    user
+}
+
+enum OrgRole {
+    consultant
+    upperManagementStakeholder
 }
