@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { api } from "@/trpc/react";
-import type { Organization } from "@prisma/client";
 import { cn } from "@/lib/utils"
 
 interface DropdownProps {
@@ -9,22 +8,8 @@ interface DropdownProps {
 }
 
 const DropdownForOrganisation = ({ organisationID, onSelect }: DropdownProps) => {
-  const [options, setOptions] = useState<Organization[]>([]);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const allOrganisations = await api.organization.getAllOrganisations.useQuery();
-        if (allOrganisations.data) {
-          setOptions(allOrganisations.data);
-          console.log(allOrganisations);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchOptions();
-  }, []);
+    const allOrganisations = api.organization.getAllOrganisations.useQuery();
+    console.log(allOrganisations);
 
   const handleSelect = (selectedOrganisationId: string) => {
     onSelect(selectedOrganisationId);
@@ -38,7 +23,7 @@ const DropdownForOrganisation = ({ organisationID, onSelect }: DropdownProps) =>
       )}
       value={organisationID} onChange={(e) => handleSelect(e.target.value)}>
         <option value="">Select an organisation</option>
-        {options.map((org) => (
+        {allOrganisations.data?.map((org) => (
           <option key={org.id} value={org.id}>
             {org.name}
           </option>
