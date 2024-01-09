@@ -1,6 +1,9 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { z } from "zod";
+
 export const organizationRouter = createTRPCRouter({
-  getAllOrganisations: publicProcedure.query(async ({ ctx }) => {
+
+  getAllOrganisations: protectedProcedure.query(async ({ ctx }) => {
     try {
       const allOrganisation = await ctx.db.organization.findMany();
       return allOrganisation;
@@ -10,4 +13,26 @@ export const organizationRouter = createTRPCRouter({
     }
   }),
 
+  getAllUsersByOrganisation: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const allUsers = await ctx.db.userOrganization.findMany({
+          where: {
+            organizationId: input.id,
+          },
+          include: {
+            user: true,
+          },
+        });
+        return allUsers;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to retrieve all users by organisation");
+      }
+    }),
 });
