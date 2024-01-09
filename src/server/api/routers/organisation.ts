@@ -6,6 +6,7 @@ export const organizationRouter = createTRPCRouter({
   getAllOrganisations: protectedProcedure.query(async ({ ctx }) => {
     try {
       const allOrganisation = await ctx.db.organization.findMany();
+      console.log(allOrganisation);
       return allOrganisation;
     } catch (error) {
       console.error(error);
