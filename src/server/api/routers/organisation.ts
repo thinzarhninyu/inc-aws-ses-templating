@@ -1,9 +1,9 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 
 export const organizationRouter = createTRPCRouter({
 
-  getAllOrganisations: protectedProcedure.query(async ({ ctx }) => {
+  getAllOrganisations: publicProcedure.query(async ({ ctx }) => {
     try {
       const allOrganisation = await ctx.db.organization.findMany();
       return allOrganisation;

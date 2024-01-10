@@ -1,4 +1,5 @@
-import { api } from "@/trpc/server";
+import { api } from "@/trpc/react";
+import { Button } from "@/app/_components/ui/button"
 
 const SendEmailButton = ({
     senderId,
@@ -13,11 +14,45 @@ const SendEmailButton = ({
     recipientsId: string[];
     quickResponseSettings: boolean;
 }) => {
+
+    const sendEmailMutation = api.email.sendEmail.useMutation();
+
+    const handleQuickResponseYes = () => {
+    }
+
+    const handleQuickResponseNo = () => {
+    }
+
+    const handleShowQuickResponse = () => {
+        return (
+            `<div>
+                <button
+                    onClick={handleQuickResponseYes}
+                >
+                    Yes
+                </button>
+                <button
+                    onClick={handleQuickResponseNo}
+                >
+                    No
+                </button>
+            </div>`
+        )
+    }
+
     const handleSendEmail = async () => {
-        "use server";
-        console.log("Sending email...");
         try {
-            await api.email.sendEmail.mutate({ senderId: senderId, subject: subject, content: content, recipientsId: recipientsId, quickResponseSettings });
+            if (quickResponseSettings) {
+                content = content.concat(...(handleShowQuickResponse()));
+            }
+            console.log("content: ", content);
+            sendEmailMutation.mutateAsync({
+                senderId: senderId,
+                subject: subject,
+                content: content,
+                recipientsId: recipientsId,
+                quickResponseSettings: quickResponseSettings
+            });
             console.log("Email sent successfully");
         } catch (err) {
             console.error("Error sending email");
@@ -25,12 +60,12 @@ const SendEmailButton = ({
     }
 
     return (
-        <button
+        <Button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
             onClick={handleSendEmail}
         >
             Send
-        </button>
+        </Button>
     )
 }
 

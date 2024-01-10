@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { api } from "@/trpc/server";
 
 import { modules, formats } from "@/data/react-quill";
 
@@ -35,7 +34,6 @@ const EmailEditor = () => {
 
     const handleQuickResponseSettingsChange = (checked: boolean) => {
         setQuickResponseSettings(checked);
-        console.log(checked);
     }
 
     return (
