@@ -5,9 +5,11 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 // import DiscordProvider from "next-auth/providers/discord";
-
+import EmailProvider from "next-auth/providers/email";
+import type { User } from "@prisma/client";
 import { env } from "@/env";
 import { db } from "@/server/db";
+
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,18 +19,15 @@ import { db } from "@/server/db";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: User;
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
+
+// interface User {
+//   // ...other properties
+//   // role: UserRole;
+// }
+
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -44,23 +43,36 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
+
+
+    // async signIn({ user }) {
+    //   if (!user.email) return false;
+    //   const exists = await db.user.findUnique({
+    //     where: {
+    //       email: user.email.toLowerCase(),
+    //     },
+    //   });
+    //   return !!exists;
+    // },
   },
-  adapter: PrismaAdapter(db),
+ 
   providers: [
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD
+        }
+      },
+      from: process.env.EMAIL_FROM
+      
+    }),
+    
   ],
+  adapter: PrismaAdapter(db),
+
 };
 
 /**
