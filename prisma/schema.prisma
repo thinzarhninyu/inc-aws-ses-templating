@@ -119,7 +119,7 @@ model Form {
 model Email {
     id                    String          @id @default(cuid())
     senderId              String
-    sender                User            @relation("EmailSender", fields: [senderId], references: [id], onDelete: Cascade)
+    sender                User            @relation("EmailSender", fields: [senderId], references: [id])
     recipients            User[]          @relation("EmailRecipients")
     subject               String
     content               String
@@ -134,8 +134,8 @@ model EmailResponse {
     emailId       String
     quickResponse EmailQuickResponse?
     senderId      String
-    sender        User                @relation("ResponseSender", fields: [senderId], references: [id], onDelete: Cascade)
-    email         Email               @relation(fields: [emailId], references: [id], onDelete: Cascade)
+    sender        User                @relation("ResponseSender", fields: [senderId], references: [id])
+    email         Email               @relation(fields: [emailId], references: [id])
     createdAt     DateTime            @default(now())
 }
 
