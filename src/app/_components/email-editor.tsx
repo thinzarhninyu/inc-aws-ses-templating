@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import { useState, useEffect } from "react";
 
 import { modules, formats } from "@/data/react-quill";
@@ -12,12 +11,15 @@ import { Label } from "@/app/_components/ui/label"
 import { Input } from "@/app/_components/ui/input"
 import SendEmailButton from "@/app/_components/send-email-button";
 
-const EmailEditor = () => {
+  const handleSelectOrganisation =(organisationID:string)=>{
+    setOrganisationID(organisationID);
+  }
 
-    const [content, setContent] = useState("");
-    const [rawText, setRawText] = useState("");
-    const [subject, setSubject] = useState("");
-    const [quickResponseSettings, setQuickResponseSettings] = useState(false);
+  const handleContentChange = (content: string) => {
+    setContent(content);
+    const plainText = content.replace(/<[^>]*>/g, "");
+    setRawText(plainText);
+  };
 
     const senderId = "clr5u3jt5000013gqb09tipy8";
     const recipientsId = ["clr5u7e9x000113gqs5819787", "clr5uabbu000313gquiod17xd"];
@@ -28,13 +30,13 @@ const EmailEditor = () => {
         setRawText(plainText);
     };
 
-    const handleSubjectChange = (subject: string) => {
-        setSubject(subject);
-    }
+  const handleSubjectChange = (subject: string) => {
+    setSubject(subject);
+  };
 
-    const handleQuickResponseSettingsChange = (checked: boolean) => {
-        setQuickResponseSettings(checked);
-    }
+  const handleQuickResponseSettingsChange = (checked: boolean) => {
+    setQuickResponseSettings(checked);
+  };
 
     return (
         <div className="w-1/2">
