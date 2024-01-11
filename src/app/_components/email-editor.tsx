@@ -5,7 +5,7 @@ import { modules, formats } from "@/data/react-quill";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+ 
 import { Checkbox } from "@/app/_components/ui/checkbox"
 import { Label } from "@/app/_components/ui/label"
 import { Input } from "@/app/_components/ui/input"
