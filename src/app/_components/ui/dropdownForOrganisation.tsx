@@ -12,7 +12,7 @@ const DropdownForOrganisation = ({ organisationID, onSelect }: DropdownProps) =>
     console.log(allOrganisations);
 
   const handleSelect = (selectedOrganisationId: string) => {
-    onSelect(selectedOrganisationId);
+    onSelect(selectedOrganisationId); 
   };
 
   return (
