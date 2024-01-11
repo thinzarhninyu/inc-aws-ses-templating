@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils"
+import type { Organization } from '@prisma/client';
 
 interface DropdownProps {
   organisationID: string;
@@ -23,7 +24,7 @@ const DropdownForOrganisation = ({ organisationID, onSelect }: DropdownProps) =>
       )}
       value={organisationID} onChange={(e) => handleSelect(e.target.value)}>
         <option value="">Select an organisation</option>
-        {allOrganisations.data?.map((org) => (
+        {allOrganisations.data?.map((org: Organization) => (
           <option key={org.id} value={org.id}>
             {org.name}
           </option>
